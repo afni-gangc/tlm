@@ -36,7 +36,7 @@ end
 # Run GLS using 3dREMLfit by looping through 57 subjects and 11 ROIs
 set ROI = (Amyg_L Amyg_R VS_L VS_R Ins_L Ins_R IPS_L IPS_R FEF_L FEF_R SMA)
 
-foreach roi  ( $ROI )
+foreach ROI  ( $ROI )
   foreach subj ( $subj )
     3dREMLfit -input ${ROI}_Avg_TS/${sub}_Amyg_ROI_avg_TS.1D'[0]'\' \
     -matrix trialRegressors/${sub}_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D \
