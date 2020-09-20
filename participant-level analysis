@@ -10,7 +10,7 @@ set subj = (MBT10 MBT11 MBT12 MBT13 MBT14 MBT15 MBT16 MBT17 MBT18 MBT19 MBT20 MB
             MBT59 MBT6  MBT60 MBT61 MBT62 MBT63 MBT7  MBT8  MBT9)
 
 # generate model matrix using 3dDeconvolve for each of the 57 subjects
-foreach subj ( $subj)
+foreach subj ( $subj )
    3dDeconvolve -input MBT"$subj"_EP_TR_MNI_2mm_SI.nii.gz -mask /data/bswift-1/spadmala/Masks/multiMask_july1st.nii \
                 -polort A -nobout -local_times -jobs 4 \
                 -num_stimts 8 \
@@ -37,8 +37,9 @@ end
 set ROI = (Amyg_L Amyg_R VS_L VS_R Ins_L Ins_R IPS_L IPS_R FEF_L FEF_R SMA)
 
 foreach roi  ( $ROI )
-foreach subj ( $subj)
-  3dREMLfit -input ${ROI}_Avg_TS/${sub}_Amyg_ROI_avg_TS.1D'[0]'\' \
-  -matrix trialRegressors/${sub}_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D \
-  -Grid 3 -tout -Rbuck ${sub}_Amyg_R_REMLfit.1D
+  foreach subj ( $subj )
+    3dREMLfit -input ${ROI}_Avg_TS/${sub}_Amyg_ROI_avg_TS.1D'[0]'\' \
+    -matrix trialRegressors/${sub}_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D \
+    -Grid 3 -tout -Rbuck ${sub}_Amyg_R_REMLfit.1D
+  end
 end
