@@ -1,0 +1,15 @@
+# Performing Bayesian multilevel modeling with the R package brms
+
+# read in the deta in data.frame format that contains:
+# 1) effect estimate; 2) standard error; 3) subject; 4) two factors (rew, dis); 5) ROI; 6) trial; 7) RT
+dat <- read.table('RT-task-data.txt', header=T)
+
+# run BML
+require(brms)
+options(mc.cores = parallel::detectCores())
+options(contrasts = c("contr.sum", "contr.poly"))
+fm <- brm(Value|se(SE) ~ rew*dis + (1|subj) + (rew*dis|ROI) + (1|trl) +
+      (1|subj:trl) + (1|subj:ROI) + (1|ROI:trl), data=dat, family=student,
+      chains = 1000, iter=4, control = list(adapt_delta = 0.99, max_treedepth = 15))
+      
+# Run other models with the above template by modifying the terms (e.g., remvoing RT).      
