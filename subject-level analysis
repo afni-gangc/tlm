@@ -14,7 +14,7 @@ foreach subj ( $subj)
    3dDeconvolve -input MBT"$subj"_EP_TR_MNI_2mm_SI.nii.gz -mask /data/bswift-1/spadmala/Masks/multiMask_july1st.nii \
                 -polort A -nobout -local_times -jobs 4 \
                 -num_stimts 8 \
-                -censor  ./MBT"$subj"_censor.1D \
+                -censor  MBT"$subj"_censor.1D \
                 -concat '1D: 0 123 246 369 492 615' \
                 -stim_times_IM 1 ../Regressors/MBT"$subj"_NoRew_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 1 NoRew_Cue   \
                 -stim_times_IM 2 ../Regressors/MBT"$subj"_Rew_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 2 Rew_Cue.      \
@@ -24,10 +24,10 @@ foreach subj ( $subj)
                 -stim_times_IM 6 ../Regressors/MBT"$subj"_Rew_Neg_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 6 Rew_Neg     \
                 -stim_times_IM 7 ../Regressors/MBT"$subj"_Error_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 7 Error_Cue   \
                 -stim_times_IM 8 ../Regressors/MBT"$subj"_Error_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 8 Error_Task    \
-                -ortvec ./MBT"$subj"_MotionPar.txt'[1..6]' 'MotionParam'          \
-                -ortvec ./MBT"$subj"_MotionPar_derv.1D 'MotionParamDerv'          \
-                -cbucket ./"MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_betas_IM.nii.gz" \
-                -x1D ./"MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D"              \
+                -ortvec MBT"$subj"_MotionPar.txt'[1..6]' 'MotionParam'          \
+                -ortvec MBT"$subj"_MotionPar_derv.1D 'MotionParamDerv'          \
+                -cbucket "MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_betas_IM.nii.gz" \
+                -x1D "MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D"              \
                 -x1D_stop -xsave
 end
 
