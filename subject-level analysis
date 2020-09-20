@@ -1,0 +1,44 @@
+# shell script for performing subject-level analysis
+# input:  whole-brain EPI time series; stimulus-timing files; ROI-level EPI time series
+# output: effect estimates and t-statistics for 11 ROIs
+
+# 57 subjects
+set subj = (MBT10 MBT11 MBT12 MBT13 MBT14 MBT15 MBT16 MBT17 MBT18 MBT19 MBT20 MBT21 \
+            MBT22 MBT23 MBT24 MBT25 MBT26 MBT28 MBT29 MBT30 MBT31 MBT32 MBT33 MBT34 \
+            MBT36 MBT37 MBT38 MBT39 MBT4  MBT40 MBT41 MBT42 MBT43 MBT44 MBT45 MBT46 \
+            MBT48 MBT49 MBT5  MBT50 MBT51 MBT52 MBT53 MBT54 MBT55 MBT56 MBT57 MBT58 \
+            MBT59 MBT6  MBT60 MBT61 MBT62 MBT63 MBT7  MBT8  MBT9)
+
+# generate model matrix using 3dDeconvolve for each of the 57 subjects
+foreach subj ( $subj)
+   3dDeconvolve -input MBT"$subj"_EP_TR_MNI_2mm_SI.nii.gz -mask /data/bswift-1/spadmala/Masks/multiMask_july1st.nii \
+                -polort A -nobout -local_times -jobs 4 \
+                -num_stimts 8 \
+                -censor  ./MBT"$subj"_censor.1D \
+                -concat '1D: 0 123 246 369 492 615' \
+                -stim_times_IM 1 ../Regressors/MBT"$subj"_NoRew_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 1 NoRew_Cue   \
+                -stim_times_IM 2 ../Regressors/MBT"$subj"_Rew_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 2 Rew_Cue.      \
+                -stim_times_IM 3 ../Regressors/MBT"$subj"_NoRew_Neu_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 3 NoRew_Neu \
+                -stim_times_IM 4 ../Regressors/MBT"$subj"_NoRew_Neg_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 4 NoRew_Neg \
+                -stim_times_IM 5 ../Regressors/MBT"$subj"_Rew_Neu_Time.txt  'GAM(8.6,0.547,0.2)' -stim_label 5 Rew_Neu    \
+                -stim_times_IM 6 ../Regressors/MBT"$subj"_Rew_Neg_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 6 Rew_Neg     \
+                -stim_times_IM 7 ../Regressors/MBT"$subj"_Error_Cue_Time.txt 'GAM(8.6,0.547,1)' -stim_label 7 Error_Cue   \
+                -stim_times_IM 8 ../Regressors/MBT"$subj"_Error_Time.txt 'GAM(8.6,0.547,0.2)' -stim_label 8 Error_Task    \
+                -ortvec ./MBT"$subj"_MotionPar.txt'[1..6]' 'MotionParam'          \
+                -ortvec ./MBT"$subj"_MotionPar_derv.1D 'MotionParamDerv'          \
+                -cbucket ./"MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_betas_IM.nii.gz" \
+                -x1D ./"MBT"$subj"_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D"              \
+                -x1D_stop -xsave
+end
+
+# extract the EPI time series for each of the 11 ROIs
+
+# Run GLS using 3dREMLfit by looping through 57 subjects and 11 ROIs
+set ROI = (Amyg_L Amyg_R VS_L VS_R Ins_L Ins_R IPS_L IPS_R FEF_L FEF_R SMA)
+
+foreach roi  ( $ROI )
+foreach subj ( $subj)
+  3dREMLfit -input ${ROI}_Avg_TS/${sub}_Amyg_ROI_avg_TS.1D'[0]'\' \
+  -matrix trialRegressors/${sub}_TR_MNI_2mm_SI_CueMR_TarMR_IM.x1D \
+  -Grid 3 -tout -Rbuck ${sub}_Amyg_R_REMLfit.1D
+end
