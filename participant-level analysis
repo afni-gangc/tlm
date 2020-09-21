@@ -1,4 +1,4 @@
-# shell script for performing subject-level analysis
+# tcsh shell script for performing subject-level analysis in AFNI
 # input:  whole-brain EPI time series; stimulus-timing files; ROI-level EPI time series
 # output: effect estimates and t-statistics for 11 ROIs
 
