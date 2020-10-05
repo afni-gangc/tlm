@@ -1,5 +1,30 @@
 # Performing Bayesian multilevel modeling with the R package brms
 
+# behavior data: response accuracy
+# read in the deta in data.frame format
+dat <- read.table('accuracy-data.txt', header=T)
+
+# run BML
+require(brms)
+options(mc.cores = parallel::detectCores())
+options(contrasts = c("contr.sum", "contr.poly"))
+set.seed(12345)
+fm <- brm(trl ~ rew*dis + (1|subj), 
+                data=dd, chains = 4, iter=1000,
+                control = list(adapt_delta = 0.99, max_treedepth = 15))
+
+# behavior data: response time
+# read in the deta in data.frame format
+dat <- read.table('RT-data.txt', header=T)
+
+# run BML
+require(brms)
+options(mc.cores = parallel::detectCores())
+options(contrasts = c("contr.sum", "contr.poly"))
+set.seed(12345)
+fm <- brm(RT ~ rew*dis + (1|subj) + (1|trl) + (1|subj:trl), data=dd,
+      family=student, chains = 4, iter=1000, control = list(adapt_delta = 0.99, max_treedepth = 15))
+
 # read in the deta in data.frame format that contains:
 # 1) effect estimate; 2) standard error; 3) subject; 4) two factors (rew, dis); 5) ROI; 6) trial; 7) RT
 dat <- read.table('RT-task-data.txt', header=T)
