@@ -33,7 +33,7 @@ end
 
 # extract the EPI time series for each of the 11 ROIs
 
-# Run GLS using 3dREMLfit by looping through 57 subjects and 11 ROIs
+# Run GLS+ARMA(1,1) using 3dREMLfit by looping through 57 subjects and 11 ROIs
 set ROI = (Amyg_L Amyg_R VS_L VS_R Ins_L Ins_R IPS_L IPS_R FEF_L FEF_R SMA)
 
 foreach ROI  ( $ROI )
